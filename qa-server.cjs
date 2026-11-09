@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = __dirname;
-const PORT = 8123;
+const PORT = Number(process.env.PORT) || 8123;
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -27,7 +27,7 @@ http.createServer((req, res) => {
   if (!filePath.startsWith(ROOT)) { res.writeHead(403); return res.end('Forbidden'); }
   fs.readFile(filePath, (err, data) => {
     if (err) { res.writeHead(404); return res.end('Not found: ' + urlPath); }
-    res.writeHead(200, { 'Content-Type': MIME[path.extname(filePath).toLowerCase()] || 'application/octet-stream' });
+    res.writeHead(200, { 'Content-Type': MIME[path.extname(filePath).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-store, must-revalidate' });
     res.end(data);
   });
 }).listen(PORT, () => console.log(`QA server running at http://localhost:${PORT}`));
